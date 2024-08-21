@@ -32,11 +32,13 @@ class GenerateProcessor
     public function buildName(): string
     {
         $shopUrl = $this->urlInterface->getBaseUrl();
-        $url = explode('//', $shopUrl);
-        $name = str_replace('/', '', $url[1]);
-        $name = str_replace('www', '', $name);
-        $name = str_replace('.', '-', $name);
-
+        $parsedUrl = parse_url($shopUrl);
+        $host = $parsedUrl['host'] ?? '';
+        if (strpos($host, 'www.') === 0) {
+            $host = substr($host, 4);
+        }
+        $name = str_replace('.', '-', $host);
+        
         return $name;
     }
 }
