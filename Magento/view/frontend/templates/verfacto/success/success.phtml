@@ -14,20 +14,20 @@ $viewModel = $block->getData('viewModel');
 <?php if ($trackingId = $viewModel->getTrackingId()): ?>
     <script>
         require(['jquery', 'Magento_Customer/js/customer-data', 'verfacto-entry-point', 'domReady!'], function ($, customerData) {
-            window.onload = function() {
-                if (document.readyState !== "loading") {
-                    let checkLoginInterval = setInterval(function () {
-                        const email = customerData.get('customer')().email;
-                        if (email) {
-                            window.VerfactoTracker.identify("<?= $trackingId;?>", email);
-                        } else {
-                            window.VerfactoTracker.identify("<?= $trackingId;?>", "<?= $block->getEmail();?>");
-                        }
-                        window.VerfactoTracker.track("<?= $trackingId;?>", "place_order");
-                        clearInterval(checkLoginInterval);
-                    }, 1000);
-                }
-            }
+            $(document).ready(function () {
+                let checkLoginInterval = setInterval(function () {
+                    const email = customerData.get('customer')().email;
+                    if (email) {
+                        window.VerfactoTracker.identify("<?= $trackingId; ?>", email);
+                    } else {
+                        window.VerfactoTracker.identify("<?= $trackingId; ?>", "<?= $block->getEmail(); ?>");
+                    }
+                    window.VerfactoTracker.track("<?= $trackingId; ?>", "place_order", {
+                        transaction_id: "<?= $block->getOrderId(); ?>"
+                    });
+                    clearInterval(checkLoginInterval);
+                }, 1000);
+            });
         });
     </script>
-<?php endif;?>
+<?php endif; ?>
